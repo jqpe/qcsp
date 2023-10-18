@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -9,9 +10,18 @@ export 'package:qcsp/cli.dart';
 Future<Hash> hashFile(String path, SupportedHashAlgorithm algo) async {
   final hashSink = algo.implementation().newHashSink();
 
+  // Ensure all platform specific carriage return and line feed are replaced with just line feeds
+  final consistentLines = StreamTransformer<String, String>.fromHandlers(
+      handleData: (String value, EventSink<String> sink) {
+    final normalizedLine = value.replaceAll(RegExp(r'\r\n|\r|\n'), '\n');
+
+    sink.add(normalizedLine);
+  });
+
   return File(path)
       .openRead()
       .transform(utf8.decoder)
+      .transform(consistentLines)
       .listen((line) => hashSink.add(line.codeUnits))
       .asFuture()
       .then((value) {

@@ -12,6 +12,14 @@ void main() {
     expect(base64, "IHv9k+ogbL3sTzCsMWY2JUXZIomxycgtoYoQqdJSIao=");
   });
 
+  test('hashFile CRLF', () async {
+    final algo = SupportedHashAlgorithm.sha256;
+    final hash = await hashFile(sampleFilePathCrlf, algo);
+    final base64 = hashToBase64String(hash);
+
+    expect(base64, "IHv9k+ogbL3sTzCsMWY2JUXZIomxycgtoYoQqdJSIao=");
+  });
+
   test("toSource", () {
     final source = toHashSource("xyd", SupportedHashAlgorithm.sha256);
     expect(source, "'sha256-xyd'");
@@ -78,6 +86,7 @@ void main() {
 }
 
 const sampleFilePath = "./test/fixtures/sample.txt";
+const sampleFilePathCrlf = "./test/fixtures/sample-crlf.txt";
 const sourceSha256 = "'sha256-IHv9k+ogbL3sTzCsMWY2JUXZIomxycgtoYoQqdJSIao='";
 const sourceSha384 =
     "'sha384-NCTzxNstWh1GOHd48dOlonrGPfe6bi/3KJKFBjK9h5tjqbEvadNVcPWZZvGCdrEy'";
